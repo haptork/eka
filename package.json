@@ -1,0 +1,23 @@
+{
+  "name": "eka-blocks",
+  "version": "0.0.1",
+  "description": "Begin working on real world ideas with logic and computers",
+  "main": "index.js",
+  "author": "haptork",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "blockly": "^1.0.0",
+    "bootstrap": "4.0",
+    "jquery": "^3.2.1",
+    "js-interpreter": "^1.4.6"
+  },
+  "devDependencies": {
+    "jshint": "^2.9.5",
+    "webpack": "^3.10.0"
+  },
+  "scripts": {
+    "start": "webpack --config webpack.config.js",
+    "build": "webpack"
+  }
+}

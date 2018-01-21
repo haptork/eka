@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="../node_modules/blockly/blockly_compressed.js"></script>
+    <script src="../node_modules/blockly/javascript_compressed.js"></script>
+    <script src="../node_modules/blockly/python_compressed.js"></script>
+    <script src="../node_modules/blockly/msg/js/en.js"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="./js/eka.js"></script>
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <script src="./js/probDefinitions-1.js"></script>
+    <script>
+        $(function() {
+          Eka.main(stages_1);
+        });
+    </script>
+  </head>
+<body>
+
+<nav class="navbar navbar-light gradbar">
+  <a class="navbar-brand" href="#">Eka</a>
+</nav>
+<div class="gradbarborder" style="height:2px"></div>
+<div id="content" class="container-fluid">
+  <div class="row" style="height:15px"> </div>
+  <div class="row">
+    <div class="col-4">
+    <div class="card bg-info border-success mb-3">
+      <h3 class="card-header">
+<div style="" class="btn-group btn-group-toggle" data-toggle="buttons">
+  <label id="optHead1" class="btn btn-sm btn-secondary active">
+    <input type="radio" name="options" id="option1" autocomplete="off" checked> Goal
+  </label>
+  <label id="optHead2" class="btn btn-sm  btn-secondary">
+    <input type="radio" name="options" id="option2" autocomplete="off"> Program 
+  </label>
+</div>
+        <span id="statusMsg" style="font-size:65%;">  </span>
+<div style="float:right;">
+  <div class="toggle" id="resety">    <input id="inputyy" class="inputy" type="checkbox">    <span class="button"></span>    <span class="label">: :</span>  </div>
+</div>
+
+
+
+      </h3>
+<!--
+  -->
+      <div class="card-block row">
+        <div id="creature_0" class="item creature-box mod-moustache mod-sleepy mod-sleepyNeg mod-wink col-4">
+          <div class="creature" style="background-color: red; animation-duration: 4.28s; animation-delay: -6.33s">
+            <div class="face" style="animation-duration: 4.24s; animation-delay: -6.9s">
+              <div class="eyes">
+                <div class="eye" style="animation-duration: 3.45s; animation-delay: -4.24s"></div>
+                <div class="eye" style="animation-duration: 3.45s; animation-delay: -4.24s"></div>
+              </div>
+                <svg class="moustache" xmlns="http://www.w3.org/2000/svg" viewBox="83 299 443 121" preserveAspectRatio="none" width="220" height="60">
+                  <path d="    M407 338C402 336 398 332 395 330 382 318 364 300 338 300 325 300 313 305 305 313 296 305 284 300 271 300 245 300 227 318 215 330 211 332 207 336 202 338 126 377 84 345 84 345     151 462 265 411 295 390 299 388 302 386 305 383 307 386 311 388 314 390 344 411 459 462 526 345Z" fill="#3F1F13"></path>
+                </svg>
+              <div class="mouth"></div>
+            </div>
+          </div>
+          <div class="info">
+            <div id="led_0" class="led led-0"></div>
+          </div>
+        </div>
+        <div id="creature_1" class="item creature-box mod-sleepy mod-sleepyPos col-4">
+          <div class="creature" style="background-color: green; animation-duration: 4.28s; animation-delay: -6.33s">
+            <div class="face" style="animation-duration: 4.24s; animation-delay: -6.9s">
+              <div class="eyes">
+                <div class="eye" style="animation-duration: 3.45s; animation-delay: -4.24s"></div>
+                <div class="eye" style="animation-duration: 3.45s; animation-delay: -4.24s"></div>
+              </div>
+              <div class="mouth">
+                <div class="tooth"></div>
+                <div class="tooth"></div>
+              </div>
+            </div>
+          </div>
+          <div class="info">
+            <div id="led_1" class="led led-1"></div>
+          </div>
+        </div>
+        <div id="creature_2" class="item creature-box mod-sleepy mod-sleepyNeg mod-wink col-4">
+          <div class="creature" style="background-color: yellow; animation-duration: 4.28s; animation-delay: -6.33s">
+            <div class="face" style="animation-duration: 4.24s; animation-delay: -6.9s">
+              <div class="eyes">
+                <div class="eye" style="animation-duration: 3.45s; animation-delay: -4.24s"></div>
+                <div class="eye" style="animation-duration: 3.45s; animation-delay: -4.24s"></div>
+              </div>
+              <div class="mouth">
+                <div class="tooth"></div>
+              </div>
+            </div>
+          </div>
+          <div class="info">
+            <div id="led_2" class="led led-2"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+<div id="myCarousel" class="carousel slide" data-interval="false" data-keyboard="true" >
+  <ol id="stageIndicators" class="carousel-indicators">
+    <!--
+    <li data-target="#myCarousel" data-slide-to="0" class="active">1</li>
+    <li data-target="#myCarousel" data-slide-to="1">2</li>
+    <li data-target="#myCarousel" data-slide-to="2">3</li> 
+    -->
+  </ol>
+  <div id="stageCards" class="carousel-inner" role="listbox">
+  </div>
+  <a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="carousel-control-next" href="#myCarousel" role="button" data-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
+</div>
+    </div>
+    <div class = "col-8">
+    <div id="blocklyContainer" class="card bg-warning border-danger mb-3">
+      <h3 class="card-header"> Program 
+        <div style="float:right">
+          <button class="btn btn-sm" id="popButton"> Show Code </button>
+    <div id="popUp" class="popover bs-popover-bottom" style="display:none; width:400px; min-width:25%; max-width:50%; position:absolute;">
+      <div class="arrow" style="position:relative; margin-right:5px; float:right;"> </div>
+      <div class="popover-header"> Source Code for MicroPython 
+
+          <span style="float:right; cursor:pointer;" id="popClose" >&times;</span>
+      </div>
+      <div class="popover-body"> 
+      <textarea id="output" disabled="disabled" style="height: 400px; width: 100%;"></textarea>
+      </div>
+    </div>
+<!--
+          <button class="btn btn-sm" id="runButton" style="min-width:50px;">Run</button>
+-->
+        </div>
+      </h3>
+      <div class="card-block">
+      <div id="blocklyDiv" class="col" style="height: 400px; width: 100%; padding-bottom:10px;">  </div>
+    </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Great Job!</h5>
+        <!--
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        -->
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <!--<div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>-->
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
