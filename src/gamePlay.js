@@ -284,7 +284,7 @@ export function checkra() {
       });
       if (isMsgShow) {
         if (allClear) {
-          mv.allClearMsg(stages.finishMsg);
+          mv.setModalMsg(stages.finishMsg);
         } else {
           mv.setModalMsg(stages.problems[mv.curStage()].finishMsg);
           mv.carousel.carousel(firstUncleared);
