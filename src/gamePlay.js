@@ -115,7 +115,7 @@ function setUpCallbacks(stages, workspace, mv, runnerObj) {
     runnerObj.runner = setTimeout(autoRun, 1000);
     // Generate JavaScript code and parse it.
   }
-
+ 
   mv.resetButton.mousedown(function() {
     mv.changeStatus(mv.status.reset);
     resetAll(mv, workspace, runnerObj);

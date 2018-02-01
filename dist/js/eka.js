@@ -114,6 +114,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["curStatus"] = curStatus;
 /* harmony export (immutable) */ __webpack_exports__["changeMode"] = changeMode;
 /* harmony export (immutable) */ __webpack_exports__["changeStatus"] = changeStatus;
+/* harmony export (immutable) */ __webpack_exports__["setButton"] = setButton;
+/* harmony export (immutable) */ __webpack_exports__["buttonVal"] = buttonVal;
 /* harmony export (immutable) */ __webpack_exports__["setSourceCode"] = setSourceCode;
 /* harmony export (immutable) */ __webpack_exports__["setModalMsg"] = setModalMsg;
 /* harmony export (immutable) */ __webpack_exports__["onStageClear"] = onStageClear;
@@ -167,8 +169,11 @@ var model = {
  "curMode": modes.goal,
  "curLed" : [0,0,0],
  "curStageIndex": 0,
- "runStates": []
+ "runStates": [],
+ "curButton" : 0
 };
+
+var buttonStates = [[0, 0], [0, 1], [1, 0], [1, 1]];
 
 function curLed(pinNum) {
   if (pinNum != null || pinNum != undefined) return model.curLed[pinNum];
@@ -255,6 +260,26 @@ function changeStatus(_status) {
   }
 }
 
+function setButton(butNo, highlow) {
+  var st = buttonStates[model.curButton].slice();
+  st[butNo] = highlow;
+  model.curButton = buttonStates.findIndex(function (elem) {
+    return elem[0] == st[0] && elem[1] == st[1];
+  });
+  var id = "#check" + butNo;
+  console.log(model.curButton);
+  console.log(buttonStates[model.curButton]);
+  if (highlow) {
+    $(id).addClass("inputy-checked");
+  } else {
+    $(id).removeClass("inputy-checked");
+  }
+}
+
+function buttonVal(butNo) {
+  return model.curButton[butNo];
+}
+
 function setSourceCode(code) {
   $('#output').text(code);
 }
@@ -311,6 +336,22 @@ function initialLayout(stages) {
        )
     );
   }
+
+  $("#inputBut0").click(function() {
+    if (model.curButton < 2) {
+      setButton(0, 1);
+    } else {
+      setButton(0, 0);
+    }
+  });
+
+  $("#inputBut1").click(function() {
+    if (model.curButton == 0 || model.curButton == 2) {
+      setButton(1, 1);
+    } else {
+      setButton(1, 0);
+    }
+  });
 }
 
 function setOutputHigh(pinNum) {
@@ -495,7 +536,7 @@ function setUpCallbacks(stages, workspace, mv, runnerObj) {
     runnerObj.runner = setTimeout(autoRun, 1000);
     // Generate JavaScript code and parse it.
   }
-
+ 
   mv.resetButton.mousedown(function() {
     mv.changeStatus(mv.status.reset);
     resetAll(mv, workspace, runnerObj);
@@ -664,7 +705,7 @@ function checkra() {
       });
       if (isMsgShow) {
         if (allClear) {
-          mv.allClearMsg(stages.finishMsg);
+          mv.setModalMsg(stages.finishMsg);
         } else {
           mv.setModalMsg(stages.problems[mv.curStage()].finishMsg);
           mv.carousel.carousel(firstUncleared);

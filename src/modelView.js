@@ -47,8 +47,11 @@ export var model = {
  "curMode": modes.goal,
  "curLed" : [0,0,0],
  "curStageIndex": 0,
- "runStates": []
+ "runStates": [],
+ "curButton" : 0
 };
+
+var buttonStates = [[0, 0], [0, 1], [1, 0], [1, 1]];
 
 export function curLed(pinNum) {
   if (pinNum != null || pinNum != undefined) return model.curLed[pinNum];
@@ -135,6 +138,26 @@ export function changeStatus(_status) {
   }
 }
 
+export function setButton(butNo, highlow) {
+  var st = buttonStates[model.curButton].slice();
+  st[butNo] = highlow;
+  model.curButton = buttonStates.findIndex(function (elem) {
+    return elem[0] == st[0] && elem[1] == st[1];
+  });
+  var id = "#check" + butNo;
+  console.log(model.curButton);
+  console.log(buttonStates[model.curButton]);
+  if (highlow) {
+    $(id).addClass("inputy-checked");
+  } else {
+    $(id).removeClass("inputy-checked");
+  }
+}
+
+export function buttonVal(butNo) {
+  return model.curButton[butNo];
+}
+
 export function setSourceCode(code) {
   $('#output').text(code);
 }
@@ -191,6 +214,22 @@ function initialLayout(stages) {
        )
     );
   }
+
+  $("#inputBut0").click(function() {
+    if (model.curButton < 2) {
+      setButton(0, 1);
+    } else {
+      setButton(0, 0);
+    }
+  });
+
+  $("#inputBut1").click(function() {
+    if (model.curButton == 0 || model.curButton == 2) {
+      setButton(1, 1);
+    } else {
+      setButton(1, 0);
+    }
+  });
 }
 
 function setOutputHigh(pinNum) {
