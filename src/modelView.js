@@ -11,6 +11,8 @@ export var carousel;
 export var resetButton;
 export var optHead1;
 export var optHead2;
+export var inputBut0;
+export var inputBut1;
 var statusMsg;
 
 export function init(stages) {
@@ -25,6 +27,8 @@ export function init(stages) {
   optHead1 = $("#optHead1");
   optHead2 = $("#optHead2");
   statusMsg = $('#statusMsg');
+  inputBut0 = $('#inputBut0');
+  inputBut1 = $('#inputBut1');
   changeMode(modes.goal, true);
   initialLayout(stages);
 }
@@ -51,7 +55,7 @@ export var model = {
  "curButton" : 0
 };
 
-var buttonStates = [[0, 0], [0, 1], [1, 0], [1, 1]];
+var buttonStates = [[0, 0], [0, 1], [1, 1], [1, 0]];
 
 export function curLed(pinNum) {
   if (pinNum != null || pinNum != undefined) return model.curLed[pinNum];
@@ -140,13 +144,14 @@ export function changeStatus(_status) {
 
 export function setButton(butNo, highlow) {
   var st = buttonStates[model.curButton].slice();
+  if (st[butNo] == highlow) return;
   st[butNo] = highlow;
   model.curButton = buttonStates.findIndex(function (elem) {
     return elem[0] == st[0] && elem[1] == st[1];
   });
   var id = "#check" + butNo;
-  console.log(model.curButton);
-  console.log(buttonStates[model.curButton]);
+  // console.log(model.curButton);
+  // console.log(buttonStates[model.curButton]);
   if (highlow) {
     $(id).addClass("inputy-checked");
   } else {
@@ -154,8 +159,18 @@ export function setButton(butNo, highlow) {
   }
 }
 
+export function setButtonState(i) {
+  var st = buttonStates[i];
+  setButton(0, st[0]);
+  setButton(1, st[1]);
+}
+
+export function nextButtonState() {
+  setButtonState((model.curButton + 1) % 4);
+}
+
 export function buttonVal(butNo) {
-  return model.curButton[butNo];
+  return buttonStates[model.curButton][butNo];
 }
 
 export function setSourceCode(code) {
@@ -214,22 +229,6 @@ function initialLayout(stages) {
        )
     );
   }
-
-  $("#inputBut0").click(function() {
-    if (model.curButton < 2) {
-      setButton(0, 1);
-    } else {
-      setButton(0, 0);
-    }
-  });
-
-  $("#inputBut1").click(function() {
-    if (model.curButton == 0 || model.curButton == 2) {
-      setButton(1, 1);
-    } else {
-      setButton(1, 0);
-    }
-  });
 }
 
 function setOutputHigh(pinNum) {

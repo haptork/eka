@@ -99,6 +99,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "resetButton", function() { return resetButton; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "optHead1", function() { return optHead1; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "optHead2", function() { return optHead2; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "inputBut0", function() { return inputBut0; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "inputBut1", function() { return inputBut1; });
 /* harmony export (immutable) */ __webpack_exports__["init"] = init;
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "modes", function() { return modes; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "status", function() { return status; });
@@ -115,6 +117,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["changeMode"] = changeMode;
 /* harmony export (immutable) */ __webpack_exports__["changeStatus"] = changeStatus;
 /* harmony export (immutable) */ __webpack_exports__["setButton"] = setButton;
+/* harmony export (immutable) */ __webpack_exports__["setButtonState"] = setButtonState;
+/* harmony export (immutable) */ __webpack_exports__["nextButtonState"] = nextButtonState;
 /* harmony export (immutable) */ __webpack_exports__["buttonVal"] = buttonVal;
 /* harmony export (immutable) */ __webpack_exports__["setSourceCode"] = setSourceCode;
 /* harmony export (immutable) */ __webpack_exports__["setModalMsg"] = setModalMsg;
@@ -133,6 +137,8 @@ var carousel;
 var resetButton;
 var optHead1;
 var optHead2;
+var inputBut0;
+var inputBut1;
 var statusMsg;
 
 function init(stages) {
@@ -147,6 +153,8 @@ function init(stages) {
   optHead1 = $("#optHead1");
   optHead2 = $("#optHead2");
   statusMsg = $('#statusMsg');
+  inputBut0 = $('#inputBut0');
+  inputBut1 = $('#inputBut1');
   changeMode(modes.goal, true);
   initialLayout(stages);
 }
@@ -173,7 +181,7 @@ var model = {
  "curButton" : 0
 };
 
-var buttonStates = [[0, 0], [0, 1], [1, 0], [1, 1]];
+var buttonStates = [[0, 0], [0, 1], [1, 1], [1, 0]];
 
 function curLed(pinNum) {
   if (pinNum != null || pinNum != undefined) return model.curLed[pinNum];
@@ -262,13 +270,14 @@ function changeStatus(_status) {
 
 function setButton(butNo, highlow) {
   var st = buttonStates[model.curButton].slice();
+  if (st[butNo] == highlow) return;
   st[butNo] = highlow;
   model.curButton = buttonStates.findIndex(function (elem) {
     return elem[0] == st[0] && elem[1] == st[1];
   });
   var id = "#check" + butNo;
-  console.log(model.curButton);
-  console.log(buttonStates[model.curButton]);
+  // console.log(model.curButton);
+  // console.log(buttonStates[model.curButton]);
   if (highlow) {
     $(id).addClass("inputy-checked");
   } else {
@@ -276,8 +285,18 @@ function setButton(butNo, highlow) {
   }
 }
 
+function setButtonState(i) {
+  var st = buttonStates[i];
+  setButton(0, st[0]);
+  setButton(1, st[1]);
+}
+
+function nextButtonState() {
+  setButtonState((model.curButton + 1) % 4);
+}
+
 function buttonVal(butNo) {
-  return model.curButton[butNo];
+  return buttonStates[model.curButton][butNo];
 }
 
 function setSourceCode(code) {
@@ -336,22 +355,6 @@ function initialLayout(stages) {
        )
     );
   }
-
-  $("#inputBut0").click(function() {
-    if (model.curButton < 2) {
-      setButton(0, 1);
-    } else {
-      setButton(0, 0);
-    }
-  });
-
-  $("#inputBut1").click(function() {
-    if (model.curButton == 0 || model.curButton == 2) {
-      setButton(1, 1);
-    } else {
-      setButton(1, 0);
-    }
-  });
 }
 
 function setOutputHigh(pinNum) {
@@ -416,9 +419,11 @@ function onStageFailure(curStageIndex, callback) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ledBlock_js__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__delayBlock_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__foreverBlock_js__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__checkAnswer__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_js_interpreter__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_js_interpreter___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_js_interpreter__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__buttonBlock_js__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__checkAnswer__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_js_interpreter__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_js_interpreter___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_js_interpreter__);
+
 
 
 
@@ -440,6 +445,7 @@ function init(_stages, _mv) {
   Object(__WEBPACK_IMPORTED_MODULE_0__ledBlock_js__["a" /* init */])(mv.setLed);
   Object(__WEBPACK_IMPORTED_MODULE_1__delayBlock_js__["a" /* init */])(mv.saveAndAppendRunState, resetBlockHighlights);
   Object(__WEBPACK_IMPORTED_MODULE_2__foreverBlock_js__["a" /* init */])(checkra);
+  Object(__WEBPACK_IMPORTED_MODULE_3__buttonBlock_js__["a" /* init */])(mv.buttonVal);
   workspace = setUpBlockly(stages, mv.blocklyDivId, mv.blocklyMediaPath);
   nStages = stages.problems.length;
   for (var i = 0; i < nStages; ++i) stageCleared.push(0); // TODO: look for fill
@@ -537,6 +543,39 @@ function setUpCallbacks(stages, workspace, mv, runnerObj) {
     // Generate JavaScript code and parse it.
   }
  
+  mv.inputBut0.mousedown(function() {
+    if (mv.model.curButton < 2) {
+      mv.setButton(0, 1);
+    } else {
+      mv.setButton(0, 0);
+    }
+    if (mv.curMode() == mv.modes.goal && workspace.getAllBlocks().length == 0) return;
+    // curPlaying is preview when there is no block.
+    resetAll(mv, workspace, runnerObj);
+    mv.changeStatus(mv.status.readyForRun);    
+    if (mv.curMode() == mv.modes.goal && workspace.getAllBlocks().length != 0) {
+      mv.changeMode(mv.modes.program);
+    }
+    runnerObj.runner = setTimeout(autoRun, 200);
+  });
+
+  mv.inputBut1.mousedown(function() {
+    if (mv.model.curButton == 0 || mv.model.curButton == 3) {
+      mv.setButton(1, 1);
+    } else {
+      mv.setButton(1, 0);
+    }
+    if (mv.curMode() == mv.modes.goal && workspace.getAllBlocks().length == 0) return;
+    // curPlaying is preview when there is no block.
+    resetAll(mv, workspace, runnerObj);
+    mv.changeStatus(mv.status.readyForRun);    
+    if (mv.curMode() == mv.modes.goal && workspace.getAllBlocks().length != 0) {
+      mv.changeMode(mv.modes.program);
+    }
+    runnerObj.runner = setTimeout(autoRun, 200);
+  });
+
+
   mv.resetButton.mousedown(function() {
     mv.changeStatus(mv.status.reset);
     resetAll(mv, workspace, runnerObj);
@@ -592,6 +631,7 @@ function setUpCallbacks(stages, workspace, mv, runnerObj) {
         nState = 0;
       }
     }
+    // mv.nextButtonState();
     applyLedState(mv, curStage[nState]); 
     runnerObj.previewRunner = setTimeout(previewStageHelper, delaySec * 1000,
                               curStage, nState + 1, loopCount);
@@ -599,6 +639,7 @@ function setUpCallbacks(stages, workspace, mv, runnerObj) {
 
   function previewStage(isAgain) {
     resetAll(mv, workspace, runnerObj);
+    // mv.setButtonState(0);
     mv.changeStatus(mv.status.previewing);
     runnerObj.previewRunner = setTimeout(function() {
     previewStageHelper(stages.problems[mv.curStage()].states.states, 0, stages.problems[mv.curStage()].states.loops, runnerObj.previewRunner);
@@ -638,7 +679,7 @@ function setUpCallbacks(stages, workspace, mv, runnerObj) {
       setTimeout(function() {
         // Begin execution
         highlightPause = false;
-        myInterpreter = new __WEBPACK_IMPORTED_MODULE_4_js_interpreter___default.a(latestCode, initApi);
+        myInterpreter = new __WEBPACK_IMPORTED_MODULE_5_js_interpreter___default.a(latestCode, initApi);
         mv.changeMode(mv.modes.program);
         runnerObj.runner = function() {
           if (myInterpreter) {
@@ -686,7 +727,7 @@ function setUpCallbacks(stages, workspace, mv, runnerObj) {
 
 // assuming global variables
 function checkra() {
-  if (Object(__WEBPACK_IMPORTED_MODULE_3__checkAnswer__["a" /* checkAnswer */])(stages.problems[mv.curStage()].states, mv.model.runStates)) {
+  if (Object(__WEBPACK_IMPORTED_MODULE_4__checkAnswer__["a" /* checkAnswer */])(stages.problems[mv.curStage()].states, mv.model.runStates)) {
     mv.changeStatus(mv.status.running);
     let cb = function() {
       var isMsgShow = false;
@@ -905,6 +946,79 @@ function initInterpreterCheckra(interpreter, scope) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = init;
+/* unused harmony default export */ var _unused_webpack_default_export = ({init});
+
+var inputState;
+
+function init(_inputState) {
+  inputState = _inputState;
+  Blockly.Blocks.digitalRead = {
+    init: function() {
+      this.jsonInit({
+        "message0": '%1 is %2',
+        "args0": [
+          {
+            "type": "field_dropdown",
+            "name": "pinNumber",
+            "options": [
+              ["button-A","0"],
+              ["button-B","1"]
+            ]
+          },
+          {
+            "type": "field_dropdown",
+            "name": "highlow",
+            "options": [
+              ["HIGH","1"],
+              ["LOW","0"]
+            ]
+          }
+        ],
+        "output": "Boolean",
+        "colour": 160,
+        "tooltip": "Returns current state of the button.",
+        "helpUrl": ""
+      });
+    }
+  };
+
+  Blockly.JavaScript.digitalRead = function(block) {
+    var pinNumber = block.getFieldValue('pinNumber');
+    var highlow = block.getFieldValue('highlow');
+    var code = (inputState(pinNumber) == highlow) ? "true" : "false";
+    return [code, Blockly.JavaScript.ORDER_NONE];
+  };
+
+  Blockly.Python.digitalRead = function(block) {
+    var pinNumber = block.getFieldValue('pinNumber');
+    var highlow = block.getFieldValue('highlow');
+    var code = "digitalRead(" + (parseInt(pinNumber) + 6)+ ") == " + highlow;
+    return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+  };
+}
+/*
+function initInterpreterButtonCheck(interpreter, scope) {
+  // Ensure function name does not conflict with variable names.
+  Blockly.JavaScript.addReservedWords('buttonCheck');
+
+  var wrapper = interpreter.createNativeFunction (
+    function(pinNumber, highlow) {
+      // $("#led_1").toggleClass("led-green led-green-focus");
+      // return (inputState[pinNumber] == highlow);
+      // steps.push(['set', pinNumber, highlow]);
+      return true;
+    });
+  interpreter.setProperty(scope, "buttonCheck", wrapper);
+}
+*/
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = checkAnswer;
 function init() {}
 
@@ -941,7 +1055,7 @@ function checkAnswer(correct, runStates) {
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function webpackUniversalModuleDefinition(root, factory) {

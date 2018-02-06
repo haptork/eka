@@ -1,6 +1,7 @@
 import {init as ledInit, initInterpreterLedSet} from './ledBlock.js';
 import {init as delayInit, initInterpreterDelay} from './delayBlock.js';
 import {init as foreverInit, initInterpreterCheckra} from './foreverBlock.js';
+import {init as buttonInit} from './buttonBlock.js';
 import {checkAnswer} from "./checkAnswer";
 import Interpreter from 'js-interpreter';
 
@@ -19,6 +20,7 @@ export function init(_stages, _mv) {
   ledInit(mv.setLed);
   delayInit(mv.saveAndAppendRunState, resetBlockHighlights);
   foreverInit(checkra);
+  buttonInit(mv.buttonVal);
   workspace = setUpBlockly(stages, mv.blocklyDivId, mv.blocklyMediaPath);
   nStages = stages.problems.length;
   for (var i = 0; i < nStages; ++i) stageCleared.push(0); // TODO: look for fill
@@ -116,6 +118,39 @@ function setUpCallbacks(stages, workspace, mv, runnerObj) {
     // Generate JavaScript code and parse it.
   }
  
+  mv.inputBut0.mousedown(function() {
+    if (mv.model.curButton < 2) {
+      mv.setButton(0, 1);
+    } else {
+      mv.setButton(0, 0);
+    }
+    if (mv.curMode() == mv.modes.goal && workspace.getAllBlocks().length == 0) return;
+    // curPlaying is preview when there is no block.
+    resetAll(mv, workspace, runnerObj);
+    mv.changeStatus(mv.status.readyForRun);    
+    if (mv.curMode() == mv.modes.goal && workspace.getAllBlocks().length != 0) {
+      mv.changeMode(mv.modes.program);
+    }
+    runnerObj.runner = setTimeout(autoRun, 200);
+  });
+
+  mv.inputBut1.mousedown(function() {
+    if (mv.model.curButton == 0 || mv.model.curButton == 3) {
+      mv.setButton(1, 1);
+    } else {
+      mv.setButton(1, 0);
+    }
+    if (mv.curMode() == mv.modes.goal && workspace.getAllBlocks().length == 0) return;
+    // curPlaying is preview when there is no block.
+    resetAll(mv, workspace, runnerObj);
+    mv.changeStatus(mv.status.readyForRun);    
+    if (mv.curMode() == mv.modes.goal && workspace.getAllBlocks().length != 0) {
+      mv.changeMode(mv.modes.program);
+    }
+    runnerObj.runner = setTimeout(autoRun, 200);
+  });
+
+
   mv.resetButton.mousedown(function() {
     mv.changeStatus(mv.status.reset);
     resetAll(mv, workspace, runnerObj);
@@ -171,6 +206,7 @@ function setUpCallbacks(stages, workspace, mv, runnerObj) {
         nState = 0;
       }
     }
+    // mv.nextButtonState();
     applyLedState(mv, curStage[nState]); 
     runnerObj.previewRunner = setTimeout(previewStageHelper, delaySec * 1000,
                               curStage, nState + 1, loopCount);
@@ -178,6 +214,7 @@ function setUpCallbacks(stages, workspace, mv, runnerObj) {
 
   function previewStage(isAgain) {
     resetAll(mv, workspace, runnerObj);
+    // mv.setButtonState(0);
     mv.changeStatus(mv.status.previewing);
     runnerObj.previewRunner = setTimeout(function() {
     previewStageHelper(stages.problems[mv.curStage()].states.states, 0, stages.problems[mv.curStage()].states.loops, runnerObj.previewRunner);
