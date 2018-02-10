@@ -513,22 +513,18 @@ footer .directions-toggle {
 }
 @media (max-width: 42em) {
   .item:nth-last-child(-n+4) {
-    display: none;
   }
 }
 @media (min-width: 42em) and (max-width: 56em) {
   .item:nth-last-child(1) {
-    display: none;
   }
 }
 @media (min-width: 56em) and (max-width: 70em) {
   .item:nth-last-child(-n+2) {
-    display: none;
   }
 }
 @media (min-width: 70em) and (max-width: 70em) {
   .item:nth-last-child(-n+4) {
-    display: none;
   }
 }
 .item.ad-box, .item.default-box {
