@@ -692,12 +692,12 @@ footer .directions-toggle {
   left: 30%;
   right: 30%;
 }
-
+/*
 .mod-camouflage .creature {
   background: url(img/mod-camouflage.png);
   background-position: center center;
 }
-
+*/
 .mod-cyclops .eye:nth-child(1) {
   left: 45%;
 }
@@ -831,11 +831,11 @@ footer .directions-toggle {
   padding-bottom: 82%;
   margin-top: 18%;
 }
-
+/*
 .mod-transparent .creature {
   background: url(img/mod-transparent.png);
 }
-
+*/
 .mod-angry .mouth {
   animation: nervous 6s ease-in-out infinite;
 }
@@ -1236,4 +1236,3 @@ background: -webkit-radial-gradient(center, ellipse cover, rgb(8, 17, 83) 0%,rgb
 background: radial-gradient(ellipse at center,rgb(120, 134, 126) 10%, rgb(61, 73, 64) 90%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fefcea', endColorstr='#f1da36',GradientType=1 ); 
 }
-</style>

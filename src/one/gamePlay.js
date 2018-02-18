@@ -1,7 +1,6 @@
-import {init as ledInit, initInterpreterLedSet} from './ledBlock.js';
-import {init as delayInit, initInterpreterDelay} from './delayBlock.js';
-import {init as foreverInit, initInterpreterCheckra} from './foreverBlock.js';
-import {init as buttonInit} from './buttonBlock.js';
+import {init as ledInit, initInterpreterLedSet} from '../blocks/ledBlock.js';
+import {init as delayInit, initInterpreterDelay} from '../blocks/delayBlock.js';
+import {init as foreverInit, initInterpreterCheckra} from '../blocks/foreverBlock.js';
 import {checkAnswer} from "./checkAnswer";
 import Interpreter from 'js-interpreter';
 
@@ -20,7 +19,6 @@ export function init(_stages, _mv) {
   ledInit(mv.setLed);
   delayInit(mv.saveAndAppendRunState, resetBlockHighlights);
   foreverInit(checkra);
-  buttonInit(mv.buttonVal);
   workspace = setUpBlockly(stages, mv.blocklyDivId, mv.blocklyMediaPath);
   nStages = stages.problems.length;
   for (var i = 0; i < nStages; ++i) stageCleared.push(0); // TODO: look for fill
