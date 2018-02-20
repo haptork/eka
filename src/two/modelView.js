@@ -1,4 +1,3 @@
-// import * as $ from 'jquery';
 // import '../node_modules/bootstrap/js/modal';
 
 export var blocklyDivId;

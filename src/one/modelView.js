@@ -17,7 +17,7 @@ var statusMsg;
 
 export function init(stages) {
   blocklyDivId = 'blocklyDiv';
-  blocklyMediaPath = '../node_modules/blockly/media/';
+  blocklyMediaPath = '../node_modules/node-blockly/blockly/media/';
   popButton = $("#popButton");
   popArea = $("#popUp");
   popClose = $("#popClose");

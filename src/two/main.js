@@ -1,13 +1,13 @@
-// imports Blockly from <script> tag.
 import $ from 'jquery';
 window.jQuery = $;
 window.$ = $;
+import * as modelView from './modelView';
+import * as gamePlay from './gamePlay';
+import Blockly from 'node-blockly/browser';
+import 'bootstrap';
 
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../css/style.css';
-
-import * as modelView from './modelView';
-import * as gamePlay from './gamePlay';
 
 export function main(stages) {
   modelView.init(stages);

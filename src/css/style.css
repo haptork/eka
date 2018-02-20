@@ -511,6 +511,7 @@ footer .directions-toggle {
     width: 12.5%;
   }
 }
+/*
 @media (max-width: 42em) {
   .item:nth-last-child(-n+4) {
     display: none;
@@ -531,6 +532,7 @@ footer .directions-toggle {
     display: none;
   }
 }
+*/
 .item.ad-box, .item.default-box {
   display: inline-block !important;
 }

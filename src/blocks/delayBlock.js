@@ -1,7 +1,8 @@
+import Blockly from 'node-blockly/browser';
+export default {init, initInterpreterDelay};
+
 var saveAndAppendRunState;
 var resetBlockHighlights;
-
-export default {init, initInterpreterDelay};
 
 export function init(_saveAndAppendRunState, _resetBlockHighlights) {
   saveAndAppendRunState = _saveAndAppendRunState;

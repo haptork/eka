@@ -3,6 +3,7 @@ import {init as delayInit, initInterpreterDelay} from '../blocks/delayBlock.js';
 import {init as foreverInit, initInterpreterCheckra} from '../blocks/foreverBlock.js';
 import {checkAnswer} from "./checkAnswer";
 import Interpreter from 'js-interpreter';
+import Blockly from 'node-blockly/browser';
 
 var stageCleared = [];
 var myInterpreter = null; // TODO

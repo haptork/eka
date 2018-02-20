@@ -1,6 +1,7 @@
 import {init as ledInit, initInterpreterLedSet} from '../blocks/ledBlock.js';
 import {init as buttonInit} from '../blocks/buttonBlock.js';
 import Interpreter from 'js-interpreter';
+import Blockly from 'node-blockly/browser';
 
 var stageCleared = [];
 var myInterpreter = null; // TODO

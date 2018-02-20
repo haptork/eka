@@ -1,8 +1,9 @@
+import Blockly from 'node-blockly/browser';
+
 var checker;
 
-export function init(_checker) {
+export function init(_Blockly, _checker) {
   checker = _checker;
-}
   Blockly.Blocks.forever = {
     init: function() {
       this.jsonInit({
@@ -31,7 +32,7 @@ export function init(_checker) {
     var code = 'while(true):\n' + statements_do + '\n';
     return code;
   };
-//}
+}
 
 export function initInterpreterCheckra(interpreter, scope) {
   Blockly.JavaScript.addReservedWords('checker');

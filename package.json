@@ -7,10 +7,11 @@
   "license": "MIT",
   "private": false,
   "dependencies": {
-    "blockly": "^1.0.0",
     "bootstrap": "4.0",
     "jquery": "^3.2.1",
-    "js-interpreter": "^1.4.6"
+    "js-interpreter": "^1.4.6",
+    "node-blockly": "^1.0.32",
+    "popper.js": "^1.12.9"
   },
   "devDependencies": {
     "css-loader": "^0.28.9",

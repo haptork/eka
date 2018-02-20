@@ -1,6 +1,8 @@
+import Blockly from 'node-blockly/browser';
+export default {init, initInterpreterLedSet};
+
 var setLed;
 
-export default {init, initInterpreterLedSet};
 
 export function init(_setLed) {
   setLed = _setLed;

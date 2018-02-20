@@ -1,3 +1,4 @@
+import Blockly from 'node-blockly/browser';
 export default {init};
 
 var inputState;
