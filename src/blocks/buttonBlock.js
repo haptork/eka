@@ -1,10 +1,11 @@
 import Blockly from 'node-blockly/browser';
-export default {init};
+export default {init, initInterpreterButtonCheck};
 
 var inputState;
 
 export function init(_inputState) {
   inputState = _inputState;
+
   Blockly.Blocks.digitalRead = {
     init: function() {
       this.jsonInit({
@@ -35,11 +36,13 @@ export function init(_inputState) {
     }
   };
 
+  var rmap = {0:"buttonA", 1:"buttonB"};
+
   Blockly.JavaScript.digitalRead = function(block) {
     var pinNumber = block.getFieldValue('pinNumber');
     var highlow = block.getFieldValue('highlow');
-    var code = (inputState(pinNumber) == highlow) ? "true" : "false";
-    return [code, Blockly.JavaScript.ORDER_NONE];
+    var code = 'digitalRead(' + rmap[pinNumber] + ') == ' + highlow;
+    return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
   };
 
   Blockly.Python.digitalRead = function(block) {
@@ -48,19 +51,15 @@ export function init(_inputState) {
     var code = "digitalRead(" + (parseInt(pinNumber) + 6)+ ") == " + highlow;
     return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
   };
-}
-/*
-function initInterpreterButtonCheck(interpreter, scope) {
-  // Ensure function name does not conflict with variable names.
-  Blockly.JavaScript.addReservedWords('buttonCheck');
 
-  var wrapper = interpreter.createNativeFunction (
-    function(pinNumber, highlow) {
-      // $("#led_1").toggleClass("led-green led-green-focus");
-      // return (inputState[pinNumber] == highlow);
-      // steps.push(['set', pinNumber, highlow]);
-      return true;
-    });
-  interpreter.setProperty(scope, "buttonCheck", wrapper);
 }
-*/
+
+export function initInterpreterButtonCheck(interpreter, scope) {
+  // Ensure function name does not conflict with variable names.
+  Blockly.JavaScript.addReservedWords('digitalRead');
+  var wrapper = interpreter.createNativeFunction (
+    function(pinNumber) {
+      return inputState(pinNumber);
+    });
+  interpreter.setProperty(scope, "digitalRead", wrapper);
+}

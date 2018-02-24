@@ -3,9 +3,9 @@ export default {init, initInterpreterLedSet};
 
 var setLed;
 
-
 export function init(_setLed) {
   setLed = _setLed;
+
   Blockly.Blocks.digitalWrite = {
     init: function() {
       this.jsonInit({
@@ -37,11 +37,13 @@ export function init(_setLed) {
       });
     }
   };
+
+  var rmap = {0:"red", 1:"green", 2:"yellow"};
   
   Blockly.JavaScript.digitalWrite = function(block) {
     var pinNumber = block.getFieldValue('pinNumber');
     var highlow = block.getFieldValue('highlow');
-    var code = "ledSet(" + pinNumber + ", " + highlow + ");\n";
+    var code = "digitalWrite(" + rmap[pinNumber] + ", " + highlow + ");\n";
     return code;
   };
   
@@ -54,10 +56,10 @@ export function init(_setLed) {
 }
 
 export function initInterpreterLedSet(interpreter, scope) {
-  Blockly.JavaScript.addReservedWords('ledSet');
+  Blockly.JavaScript.addReservedWords('digitalWrite');
   var wrapper = interpreter.createNativeFunction (
     function(pinNumber, highlow) {
       setLed(pinNumber, highlow);
     });
-  interpreter.setProperty(scope, "ledSet", wrapper);
+  interpreter.setProperty(scope, "digitalWrite", wrapper);
 }

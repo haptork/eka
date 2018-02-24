@@ -2,6 +2,9 @@
 <html>
   <head>
     <script src="./js/ifElseLogic.js"></script>
+    <!--
+    <link rel="stylesheet" href="../node_modules/codemirror/lib/codemirror.css">
+    -->
     <link rel="stylesheet" href="./css/styles.css">
     <script src="./js/levels/probDefinitions-2.js"></script>
     <script>
@@ -9,6 +12,16 @@
           Eka.main(stages_2);
         });
     </script>
+    <style>
+      .nav-link{
+        background-color:#aaa;
+        border-color:black;
+        color: darkblue;
+      }
+      #blocklyTab.active {
+        background-color:#ddd;
+      }
+    </style>
   </head>
 <body>
 
@@ -162,8 +175,17 @@
         </div>
       </h3>
       <div class="card-block">
-      <div id="blocklyDiv" class="col" style="height: 400px; width: 100%; padding-bottom:10px;">  </div>
-    </div>
+        <div class="col">
+        <ul class="nav nav-tabs" role="tablist">
+          <li role="presentation" class="nav-item active"><a class="nav-link active" id="blocklyTab" href="#blocklyDiv" aria-controls="blocklyDiv" role="tab" data-toggle="tab">Blocks</a></li>
+          <li role="presentation" class="nav-item"><a class="nav-link" id="textTab" href="#codeDiv" aria-controls="codeDiv" role="tab" data-toggle="tab">Text</a></li>
+        </ul>
+        <div class="tab-content">
+          <div id="blocklyDiv" class="tab-pane active" style="height: 400px; width: 100%; padding-bottom:10px;">  </div>
+          <div id="codeDiv" class="tab-pane" style="height: 400px; width: 100%; padding-bottom:10px;">  </div>
+        </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

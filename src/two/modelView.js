@@ -12,11 +12,15 @@ export var optHead1;
 export var optHead2;
 export var inputBut0;
 export var inputBut1;
+export var codeDiv;
+export var blocklyTab;
+export var textTab;
 var statusMsg;
 
 export function init(stages) {
   blocklyDivId = 'blocklyDiv';
-  blocklyMediaPath = '../node_modules/blockly/media/';
+  codeDiv = document.getElementById("codeDiv");
+  blocklyMediaPath = '../node_modules/node-blockly/blockly/media/';
   popButton = $("#popButton");
   popArea = $("#popUp");
   popClose = $("#popClose");
@@ -28,6 +32,8 @@ export function init(stages) {
   statusMsg = $('#statusMsg');
   inputBut0 = $('#inputBut0');
   inputBut1 = $('#inputBut1');
+  blocklyTab = $('#blocklyTab');
+  textTab = $('#textTab');
   changeMode(modes.goal, true);
   initialLayout(stages);
 }
@@ -47,6 +53,11 @@ export var status = Object.freeze({
   "checkingDone": 10
 });
 
+export var CodeGen = Object.freeze({
+  "blockly": 0,
+  "code": 1,
+});
+
 export var logicStates = Object.freeze({
   "low": 0,
   "high": 1,
@@ -59,10 +70,26 @@ export var model = {
  "curLed" : [logicStates.unknown,logicStates.unknown,logicStates.unknown],
  "curStageIndex": 0,
  "runStates": [],
- "curButton" : 0
+ "curButton" : 0,
+ "codegen": -1
 };
 
 var buttonStates = [[0, 0], [0, 1], [1, 1], [1, 0]];
+
+export function codeGen() {
+  return model.codegen;
+}
+
+export function setCodeGen(codegen) {
+  // TODO switch tabs;
+  model.codegen = codegen;
+  if (codegen == CodeGen.blockly) {
+    blocklyTab.tab("show");
+  } else {
+    textTab.tab("show");
+  }
+  //console.log("codegen is :" + codegen);
+}
 
 export function curLed(pinNum) {
   if (pinNum != null || pinNum != undefined) return model.curLed[pinNum];
@@ -94,8 +121,19 @@ export function setLed(pinNum, val) {
   changeLed(pinNum, val);
 }
 
-export function changeCurStage(index) {
+export function changeCurStage(index, stages) {
   model.curStageIndex = index;
+  if (stages.problems[index].codegen.avail[0]) {
+    blocklyTab.show();
+  } else {
+    blocklyTab.hide();
+  }
+  if (stages.problems[index].codegen.avail[1]) {
+    textTab.show();
+  } else {
+    textTab.hide();
+  }
+  // TODO make tabs visible or invisible based on 
 }
 
 export function curStage() {
@@ -286,8 +324,6 @@ function setOutputConfused(pinNum) {
   */
   //$("#creature_" + pinNum).addClass("mod-tall");
 }
-
-
 
 export function setModalMsg(msg) {
   $("#myModal").find(".modal-body").text(msg);

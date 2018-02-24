@@ -18,6 +18,7 @@ var stages_2 = {
           </block>
         </xml>`,
        "states": {"loops": 1, "states": [[0,2,2], [0,2,2], [1,2,2],[1,2,2]]},
+       "codegen": {"primary": 0, "avail": [true, true]},
        "transitions": "two_input_buttons",
        "maxBlocks": 20
      },
@@ -34,6 +35,7 @@ var stages_2 = {
           <block type='logic_operation'></block>
         </xml>`,
        "states": {"loops": 1, "states": [[0,2,2], [0,2,2], [1,2,2],[0,2,2]]},
+       "codegen": {"primary": 0, "avail": [true, true]},
        "transitions": "two_input_buttons",
        "maxBlocks": 6 
      },
@@ -52,6 +54,7 @@ var stages_2 = {
           <block type="logic_negate"></block>
         </xml>`,
        "states": {"loops": 1, "states": [[0,2,2], [0,2,2], [0,2,2],[1,2,2]]},
+       "codegen": {"primary": 0, "avail": [true, true]},
        "transitions": "two_input_buttons",
        "maxBlocks": 20
      },
@@ -69,8 +72,25 @@ var stages_2 = {
           <block type="logic_negate"></block>
         </xml>`,
        "states": {"loops": 1, "states": [[2,2,0], [2,2,1], [2,2,1],[2,2,1]]},
+       "codegen": {"primary": 0, "avail": [true, true]},
        "transitions": "two_input_buttons",
        "maxBlocks": 6 
+     },
+     {
+       "title":"Go Green with text!",
+       "statement":"Turn up the green light when button B is not pressed and turn it down when it is.",
+       "finishMsg": "Get ready for the next stage!",
+       "toolbox":`<xml>
+          <block type='digitalWrite'></block> 
+          <block type='digitalRead'></block> 
+          <block type="controls_if">
+            <mutation else="1"></mutation>
+          </block>
+        </xml>`,
+       "states": {"loops": 1, "states": [[2,1,2], [2,0,2], [2,0,2],[2,1,2]]},
+       "codegen": {"primary": 1, "avail": [false, true]},
+       "transitions": "two_input_buttons",
+       "maxBlocks": 20
      },
      {
        "title":"Pairs!",
@@ -87,6 +107,7 @@ var stages_2 = {
           <block type="logic_negate"></block>
         </xml>`,
        "states": {"loops": 1, "states": [[0,0,2], [0,1,2], [1,1,2],[1,0,2]]},
+       "codegen": {"primary": 0, "avail": [true, true]},
        "transitions": "two_input_buttons",
        "maxBlocks": 20
      },
@@ -104,6 +125,7 @@ var stages_2 = {
           <block type='logic_operation' disabled='true'></block>
         </xml>`,
        "states": {"loops": 1, "states": [[2,2,0], [2,2,1], [2,2,1],[2,2,1]]},
+       "codegen": {"primary": 0, "avail": [true, false]},
        "transitions": "two_input_buttons",
        "maxBlocks": 20 
      },
@@ -120,6 +142,7 @@ var stages_2 = {
           <block type="logic_negate"></block>
        </xml>`,
        "states": {"loops": 1, "states": [[1,1,1], [1,1,1], [1,0,1],[1,0,1]]},
+       "codegen": {"primary": 1, "avail": [false, true]},
        "transitions": "two_input_buttons",
        "maxBlocks": 6
      },
@@ -138,6 +161,7 @@ var stages_2 = {
           <block type='logic_operation'></block>
         </xml>`,
        "states": {"loops": 1, "states": [[0,0,0], [0,1,0], [0,0,1],[1,0,0]]},
+       "codegen": {"primary": 1, "avail": [true, true]},
        "transitions": "two_input_buttons",
        "maxBlocks": 20
      },
@@ -155,6 +179,7 @@ var stages_2 = {
         <block type='logic_operation' disabled='true'></block>
         </xml>`,
        "states": {"loops": 1, "states": [[0,2,2], [0,2,2], [1,2,2],[0,2,2]]},
+       "codegen": {"primary": 0, "avail": [true, false]},
        "transitions": "two_input_buttons",
        "maxBlocks": 20
      },
@@ -171,6 +196,7 @@ var stages_2 = {
           <block type='logic_operation'></block>
           <block type="logic_negate"></block>
      </xml>`, "states": {"loops": 1, "states": [[2,2,2], [2,2,2], [1,2,2],[1,2,2]]},
+       "codegen": {"primary": 0, "avail": [true, false]},
        "transitions": "two_input_buttons",
        "maxBlocks": 1
      }

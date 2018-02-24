@@ -1,16 +1,18 @@
 import {init as ledInit, initInterpreterLedSet} from '../blocks/ledBlock.js';
-import {init as buttonInit} from '../blocks/buttonBlock.js';
+import {init as buttonInit, initInterpreterButtonCheck} from '../blocks/buttonBlock.js';
 import Interpreter from 'js-interpreter';
 import Blockly from 'node-blockly/browser';
+import CodeMirror from 'codemirror';
 
 var stageCleared = [];
 var myInterpreter = null; // TODO
 var latestCode = ''; // TODO
-var highlightPause;
 var workspace;
+var codespace;
 var stages;
 var nStages;
 var mv;
+var isBlocklyLoaded = true;
 
 export function init(_stages, _mv) {
   stages = _stages;
@@ -18,6 +20,9 @@ export function init(_stages, _mv) {
   ledInit(mv.setLed);
   buttonInit(mv.buttonVal);
   workspace = setUpBlockly(stages, mv.blocklyDivId, mv.blocklyMediaPath);
+  codespace = CodeMirror(mv.codeDiv, {
+    mode:  'javascript'
+  });
   nStages = stages.problems.length;
   for (var i = 0; i < nStages; ++i) stageCleared.push(0); // TODO: look for fill
   var runner, previewRunner;
@@ -32,11 +37,6 @@ export function applyLedState(mv, ar) {
 
 export function resetLed(mv, st = mv.logicStates.unknown) {
   applyLedState(mv, [st, st, st]); 
-}
-
-function resetBlockHighlights() {
-  workspace.highlightBlock(null);
-  highlightPause = false;
 }
 
 // called either if blocks are changed or the run finishes.
@@ -58,22 +58,28 @@ function stopRuns(runnerObj) {
 function resetAll(mv, workspace, runnerObj) {
   resetInterpreter();
   stopRuns(runnerObj);
-  resetBlockHighlights();
   resetLed(mv);//, mv.logicStates.low);
+}
+
+function cookCode(mv, workspace) {
+  var x;
+  if (mv.codeGen() == mv.CodeGen.blockly) {
+    x = Blockly.JavaScript.workspaceToCode(workspace);
+  } else {
+    x = codespace.getValue();
+  }
+  return "var red = 0;\nvar green = 1;\nvar yellow = 2;\nvar buttonA = 0;\nvar buttonB = 1;\n" + x;
 }
 
 function setUpRun(mv, workspace, runnerObj) {
   resetAll(mv, workspace, runnerObj);
   mv.changeStatus(mv.status.running); 
-  Blockly.JavaScript.STATEMENT_PREFIX = 'highlightBlock(%1);\n';
-  Blockly.JavaScript.addReservedWords('highlightBlock');
-  latestCode = Blockly.JavaScript.workspaceToCode(workspace);
+  latestCode = cookCode(mv, workspace);
 }
 
 function tearDownRun(mv, workspace, runnerObj) {
   resetInterpreter();
   stopRuns(runnerObj);
-  resetBlockHighlights();
   mv.changeStatus(mv.status.runStopped);
 }
 
@@ -88,11 +94,15 @@ function setUpBlockly (stages, blocklyDivId, blocklyMediaPath, runnerObj) {
 
 function setUpCallbacks(stages, workspace, mv, runnerObj) {
   workspace.addChangeListener(function(event) {
-    mv.setSourceCode(Blockly.Python.workspaceToCode(workspace));
+    mv.setSourceCode(Blockly.JavaScript.workspaceToCode(workspace));
     if (!(event instanceof Blockly.Events.Ui)) {
       // Something changed. Parser needs to be reloaded.
       resetOnBlockChange();
     }
+  });
+  codespace.on("change", function(event) {
+    mv.setSourceCode(codespace.getValue());
+    resetOnBlockChange();
   });
 
   function autoRun() {
@@ -118,11 +128,10 @@ function setUpCallbacks(stages, workspace, mv, runnerObj) {
       } else {
         mv.resetRunState();
         mv.setButtonState(i);
-        latestCode = Blockly.JavaScript.workspaceToCode(workspace);
+        latestCode = cookCode(mv, workspace);
         if (!myInterpreter) {
           setTimeout(function() {
             // Begin execution
-            highlightPause = false;
             myInterpreter = new Interpreter(latestCode, initApi);
             mv.changeMode(mv.modes.none);
             runnerObj.runner = function() {
@@ -148,7 +157,6 @@ function setUpCallbacks(stages, workspace, mv, runnerObj) {
                   */
                   resetInterpreter();
                   stopRuns(runnerObj);
-                  resetBlockHighlights();
                   if (isEq == true) {
                     rr(i + 1);
                     //console.log("+++");
@@ -169,11 +177,13 @@ function setUpCallbacks(stages, workspace, mv, runnerObj) {
 
   // called initially and when code changes
   function resetOnBlockChange() {
-    if (mv.curMode() == mv.modes.goal && workspace.getAllBlocks().length == 0) return;
+    var thereIsCode = mv.codeGen() == mv.CodeGen.blockly ? workspace.getAllBlocks().length > 0
+                                                         : codespace.getValue().length > 0;
+    if (mv.curMode() == mv.modes.goal && !thereIsCode) return;
     // curPlaying is preview when there is no block.
     resetAll(mv, workspace, runnerObj);
     mv.changeStatus(mv.status.readyForRun);    
-    if (mv.curMode() == mv.modes.goal && workspace.getAllBlocks().length != 0) {
+    if (mv.curMode() == mv.modes.goal && thereIsCode) {
       mv.changeMode(mv.modes.program);
     }
     runnerObj.runner = setTimeout(autoRun, 1000);
@@ -220,29 +230,72 @@ function setUpCallbacks(stages, workspace, mv, runnerObj) {
     playCur();
   });
 
+  var replies = []; 
+  mv.blocklyTab.click(function(){
+    mv.setCodeGen(mv.CodeGen.blockly);
+    if (!isBlocklyLoaded) {
+      isBlocklyLoaded = true;
+      workspace.updateToolbox(stages.problems[mv.curStage()].toolbox);
+      if (replies[mv.curStage()] && replies[mv.curStage()][1]) {
+        Blockly.Xml.domToWorkspace(replies[mv.curStage()][1], workspace);
+      } else if(stages.problems[mv.curStage()].defaultBlocks) {
+        Blockly.Xml.domToWorkspace(replies[mv.curStage()][1], workspace);
+      }
+    }
+    mv.setSourceCode(Blockly.JavaScript.workspaceToCode(workspace));
+    resetOnBlockChange();
+  });
+  
+  mv.textTab.click(function(){
+    mv.setCodeGen(mv.CodeGen.code);
+    mv.setSourceCode(codespace.getValue());
+    resetOnBlockChange();
+  });
+
+
   function setUpCarosel(mv, workspace, runnerObj) {
-    var replies = []; 
     for(var i = 0; i < nStages; ++i) replies.push(null); // TODO: look for fill
     mv.carousel.on("slide.bs.carousel", function(e) {
+      mv.changeStatus(mv.status.reset);
       resetAll(mv, workspace, runnerObj);
       mv.changeStatus(mv.status.finish);
-      replies[mv.curStage()] = Blockly.Xml.workspaceToDom(workspace);
+      replies[mv.curStage()] = [mv.codeGen(), Blockly.Xml.workspaceToDom(workspace),
+                                codespace.getValue()];
       workspace.clear();
-      if (replies[e.to]) Blockly.Xml.domToWorkspace(replies[e.to], workspace);
-      mv.changeCurStage(e.to);
-      workspace.updateToolbox(stages.problems[e.to].toolbox);
+      codespace.setValue(''); 
+      mv.changeCurStage(e.to, stages);
+      if (replies[e.to]) {
+        mv.setCodeGen(replies[e.to][0]);
+        isBlocklyLoaded = (mv.codeGen() == mv.CodeGen.blockly);
+        if (replies[e.to][1] && isBlocklyLoaded) Blockly.Xml.domToWorkspace(replies[e.to][1], workspace);
+        if (replies[e.to][2]) codespace.setValue(replies[e.to][2], workspace);
+      } else {
+        // load from stages default
+        mv.setCodeGen(stages.problems[e.to].codegen.primary);
+        isBlocklyLoaded = (mv.codeGen() == mv.CodeGen.blockly);
+        if (stages.problems[e.to].defaultBlocks && isBlocklyLoaded) Blockly.Xml.domToWorkspace(stages.problems[e.to].defaultBlocks);
+        if (stages.problems[e.to].defaultCode) codespace.setValue(stages.problems[e.to].defaultCode);
+      }
+      if (isBlocklyLoaded) workspace.updateToolbox(stages.problems[e.to].toolbox);
       workspace.options.maxBlocks = stages.problems[e.to].maxBlocks;
-      if (workspace.getAllBlocks().length == 0) {
+      var thereIsCode = (mv.codeGen() == mv.CodeGen.blockly) ? workspace.getAllBlocks().length > 0
+                                                             : codespace.getValue().length > 0;
+      if (thereIsCode) {
+        mv.changeMode(mv.modes.program);
+        //mv.changeStatus(mv.status.running);
+      } else {
         mv.changeMode(mv.modes.goal);
         mv.changeStatus(mv.status.previewing);
         playCur();
-      } else {
-        mv.changeMode(mv.modes.program);
-        mv.changeStatus(mv.status.running);
       }
     });
   }
   setUpCarosel(mv, workspace, runnerObj);
+        // load from stages default
+        if (stages.problems[0].defaultBlocks) Blockly.Xml.domToWorkspace(stages.problems[e.to].defaultBlocks);
+        if (stages.problems[0].defaultCode) codespace.setValue(stages.problems[e.to].defaultCode);
+        mv.setCodeGen(stages.problems[0].codegen.primary);
+
 
   function previewStageHelper(curStage, nState, loopCount) {
     var delaySec = 1.1;
@@ -261,19 +314,10 @@ function setUpCallbacks(stages, workspace, mv, runnerObj) {
   }
 
   function previewStage(isAgain) {
-    // mv.setButtonState(0);
-    if (stages.problems[mv.curStage()].transitions == "two_input_buttons") {
-      mv.changeStatus(mv.status.previewing);
-      runnerObj.previewRunner = setTimeout(function(){
-        applyLedState(mv, stages.problems[mv.curStage()].states.states[mv.model.curButton]);
-      }, 300);
-    } else {
-      mv.changeStatus(mv.status.previewing);
-      resetAll(mv, workspace, runnerObj);
-      runnerObj.previewRunner = setTimeout(function() {
-      previewStageHelper(stages.problems[mv.curStage()].states.states, 0, stages.problems[mv.curStage()].states.loops, runnerObj.previewRunner);
-      }, 700);
-    }
+    mv.changeStatus(mv.status.previewing);
+    runnerObj.previewRunner = setTimeout(function(){
+      applyLedState(mv, stages.problems[mv.curStage()].states.states[mv.model.curButton]);
+    }, 300);
   }
 
   function playCur() {
@@ -308,7 +352,6 @@ function setUpCallbacks(stages, workspace, mv, runnerObj) {
     if (!myInterpreter) {
       setTimeout(function() {
         // Begin execution
-        highlightPause = false;
         myInterpreter = new Interpreter(latestCode, initApi);
         mv.changeMode(mv.modes.program);
         runnerObj.runner = function() {
@@ -335,20 +378,7 @@ function setUpCallbacks(stages, workspace, mv, runnerObj) {
   function initApi(interpreter, scope) {
     // Add an API for the functions in different blocks.
     initInterpreterLedSet(interpreter, scope);
-    // Add an API function for highlighting blocks.
-    var wrapper = function(id) {
-      id = id ? id.toString() : '';
-      return interpreter.createPrimitive(highlightBlock(id));
-    };
-    interpreter.setProperty(scope, 'highlightBlock',
-        interpreter.createNativeFunction(wrapper));
-  }
-
-  highlightPause = false;
-
-  function highlightBlock(id) {
-    workspace.highlightBlock(id);
-    highlightPause = true;
+    initInterpreterButtonCheck(interpreter, scope);
   }
 }
 
