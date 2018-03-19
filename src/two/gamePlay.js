@@ -61,6 +61,10 @@ function resetAll(mv, workspace, runnerObj) {
   resetLed(mv);//, mv.logicStates.low);
 }
 
+function addToCode(code) {
+  return "var red = 0;\nvar green = 1;\nvar yellow = 2;\nvar buttonA = 0;\nvar buttonB = 1;\n" + code;
+}
+
 function cookCode(mv, workspace) {
   var x;
   if (mv.codeGen() == mv.CodeGen.blockly) {
@@ -68,7 +72,7 @@ function cookCode(mv, workspace) {
   } else {
     x = codespace.getValue();
   }
-  return "var red = 0;\nvar green = 1;\nvar yellow = 2;\nvar buttonA = 0;\nvar buttonB = 1;\n" + x;
+  return x;
 }
 
 function setUpRun(mv, workspace, runnerObj) {
@@ -132,7 +136,7 @@ function setUpCallbacks(stages, workspace, mv, runnerObj) {
         if (!myInterpreter) {
           setTimeout(function() {
             // Begin execution
-            myInterpreter = new Interpreter(latestCode, initApi);
+            myInterpreter = new Interpreter(addToCode(latestCode), initApi);
             mv.changeMode(mv.modes.none);
             runnerObj.runner = function() {
               if (myInterpreter) {
@@ -352,7 +356,7 @@ function setUpCallbacks(stages, workspace, mv, runnerObj) {
     if (!myInterpreter) {
       setTimeout(function() {
         // Begin execution
-        myInterpreter = new Interpreter(latestCode, initApi);
+        myInterpreter = new Interpreter(addToCode(latestCode), initApi);
         mv.changeMode(mv.modes.program);
         runnerObj.runner = function() {
           if (myInterpreter) {
@@ -404,7 +408,7 @@ function successOrFail(isEq) {
         if (allClear) {
           mv.setModalMsg(stages.finishMsg);
         } else {
-          mv.setModalMsg(stages.problems[mv.curStage()].finishMsg);
+          mv.setModalMsg(stages.problems[mv.curStage()].finishMsg, latestCode);
           mv.carousel.carousel(firstUncleared);
         }
       }

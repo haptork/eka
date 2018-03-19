@@ -16,6 +16,7 @@ export var codeDiv;
 export var blocklyTab;
 export var textTab;
 var statusMsg;
+var finishModal;
 
 export function init(stages) {
   blocklyDivId = 'blocklyDiv';
@@ -34,6 +35,7 @@ export function init(stages) {
   inputBut1 = $('#inputBut1');
   blocklyTab = $('#blocklyTab');
   textTab = $('#textTab');
+  finishModal = $("#myModal");
   changeMode(modes.goal, true);
   initialLayout(stages);
 }
@@ -228,7 +230,7 @@ export function setSourceCode(code) {
 }
 
 function initialLayout(stages) {
-  $("#myModal").modal({
+  finishModal.modal({
     show: false
   });
   var nStages = stages.problems.length;
@@ -325,9 +327,10 @@ function setOutputConfused(pinNum) {
   //$("#creature_" + pinNum).addClass("mod-tall");
 }
 
-export function setModalMsg(msg) {
-  $("#myModal").find(".modal-body").text(msg);
-  $("#myModal").modal("show");
+export function setModalMsg(msg, code) {
+  finishModal.find(".modal-body").text(msg);
+  if (code) finishModal.find(".card-text").text(code);
+  finishModal.modal("show");
 }
 
 export function onStageClear(curStage, callback) {
