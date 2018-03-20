@@ -406,7 +406,7 @@ function successOrFail(isEq) {
       });
       if (isMsgShow) {
         if (allClear) {
-          mv.setModalMsg(stages.finishMsg);
+          mv.setModalMsg(stages.finishMsg, latestCode);
         } else {
           mv.setModalMsg(stages.problems[mv.curStage()].finishMsg, latestCode);
           mv.carousel.carousel(firstUncleared);

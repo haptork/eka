@@ -329,7 +329,8 @@ function setOutputConfused(pinNum) {
 
 export function setModalMsg(msg, code) {
   finishModal.find(".modal-body").text(msg);
-  if (code) finishModal.find(".card-text").text(code);
+  console.log(code);
+  if (code !== undefined) finishModal.find(".card-text").text(code);
   finishModal.modal("show");
 }
 
